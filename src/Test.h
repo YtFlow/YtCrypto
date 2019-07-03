@@ -11,8 +11,8 @@ namespace YtCrypto
 		bool dec_iv_inited;
 	public:
 		Test(const Platform::Array<uint8, 1u>^ key, const Platform::Array<uint8, 1u>^ iv);
-		unsigned int Encrypt(const Platform::Array<uint8, 1u>^ encData, Platform::WriteOnlyArray<uint8, 1u>^ outData);
-		unsigned int Decrypt(const Platform::Array<uint8, 1u>^ decData, Platform::WriteOnlyArray<uint8, 1u>^ outData);
+		unsigned int Encrypt(const Platform::Array<uint8, 1u>^ encData, size_t encDataLen, Platform::WriteOnlyArray<uint8, 1u>^ outData);
+		unsigned int Decrypt(const Platform::Array<uint8, 1u>^ decData, size_t decDataLen, Platform::WriteOnlyArray<uint8, 1u>^ outData);
 		virtual ~Test();
 	};
 }
