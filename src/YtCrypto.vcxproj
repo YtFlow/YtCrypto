@@ -217,6 +217,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CryptorFactory.h" />
+    <ClInclude Include="ICryptor.h" />
     <ClInclude Include="mbedtls\include\mbedtls\aes.h" />
     <ClInclude Include="mbedtls\include\mbedtls\aesni.h" />
     <ClInclude Include="mbedtls\include\mbedtls\arc4.h" />
@@ -288,9 +290,10 @@
     <ClInclude Include="mbedtls\include\mbedtls\x509_csr.h" />
     <ClInclude Include="mbedtls\include\mbedtls\xtea.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Test.h" />
+    <ClInclude Include="MbedStreamCryptor.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CryptorFactory.cpp" />
     <ClCompile Include="mbedtls\library\aes.c">
       <EnforceTypeConversionRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </EnforceTypeConversionRules>
@@ -373,7 +376,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Test.cpp" />
+    <ClCompile Include="MbedStreamCryptor.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -79,7 +79,8 @@
     <ClCompile Include="mbedtls\library\x509write_crt.c" />
     <ClCompile Include="mbedtls\library\x509write_csr.c" />
     <ClCompile Include="mbedtls\library\xtea.c" />
-    <ClCompile Include="Test.cpp" />
+    <ClCompile Include="CryptorFactory.cpp" />
+    <ClCompile Include="MbedStreamCryptor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -153,6 +154,8 @@
     <ClInclude Include="mbedtls\include\mbedtls\x509_crt.h" />
     <ClInclude Include="mbedtls\include\mbedtls\x509_csr.h" />
     <ClInclude Include="mbedtls\include\mbedtls\xtea.h" />
-    <ClInclude Include="Test.h" />
+    <ClInclude Include="ICryptor.h" />
+    <ClInclude Include="CryptorFactory.h" />
+    <ClInclude Include="MbedStreamCryptor.h" />
   </ItemGroup>
 </Project>
