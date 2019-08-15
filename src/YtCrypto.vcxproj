@@ -115,9 +115,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <GenerateManifest>false</GenerateManifest>
+    <IncludePath>mbedtls\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <GenerateManifest>false</GenerateManifest>
+    <IncludePath>mbedtls\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -128,13 +130,15 @@
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <CallingConvention>StdCall</CallingConvention>
-      <CompileAs>CompileAsCpp</CompileAs>
+      <CallingConvention>Cdecl</CallingConvention>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <AdditionalOptions>/nodefaultlib:vccorlibd /nodefaultlib:msvcrtd vccorlibd.lib msvcrtd.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -146,11 +150,13 @@
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <CallingConvention>Cdecl</CallingConvention>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -163,11 +169,12 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
       <CompileAs>CompileAsCpp</CompileAs>
-      <CallingConvention>StdCall</CallingConvention>
+      <CallingConvention>Cdecl</CallingConvention>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/nodefaultlib:vccorlibd /nodefaultlib:msvcrtd vccorlibd.lib msvcrtd.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -180,10 +187,12 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
       <CompileAs>CompileAsCpp</CompileAs>
+      <CallingConvention>Cdecl</CallingConvention>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -195,10 +204,12 @@
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <CallingConvention>Cdecl</CallingConvention>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/nodefaultlib:vccorlibd /nodefaultlib:msvcrtd vccorlibd.lib msvcrtd.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -210,10 +221,12 @@
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <CallingConvention>Cdecl</CallingConvention>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -222,6 +235,7 @@
     <ClInclude Include="mbedtls\include\mbedtls\aes.h" />
     <ClInclude Include="mbedtls\include\mbedtls\aesni.h" />
     <ClInclude Include="mbedtls\include\mbedtls\arc4.h" />
+    <ClInclude Include="mbedtls\include\mbedtls\aria.h" />
     <ClInclude Include="mbedtls\include\mbedtls\asn1.h" />
     <ClInclude Include="mbedtls\include\mbedtls\asn1write.h" />
     <ClInclude Include="mbedtls\include\mbedtls\base64.h" />
@@ -231,6 +245,8 @@
     <ClInclude Include="mbedtls\include\mbedtls\camellia.h" />
     <ClInclude Include="mbedtls\include\mbedtls\ccm.h" />
     <ClInclude Include="mbedtls\include\mbedtls\certs.h" />
+    <ClInclude Include="mbedtls\include\mbedtls\chacha20.h" />
+    <ClInclude Include="mbedtls\include\mbedtls\chachapoly.h" />
     <ClInclude Include="mbedtls\include\mbedtls\check_config.h" />
     <ClInclude Include="mbedtls\include\mbedtls\cipher.h" />
     <ClInclude Include="mbedtls\include\mbedtls\cipher_internal.h" />
@@ -251,6 +267,7 @@
     <ClInclude Include="mbedtls\include\mbedtls\error.h" />
     <ClInclude Include="mbedtls\include\mbedtls\gcm.h" />
     <ClInclude Include="mbedtls\include\mbedtls\havege.h" />
+    <ClInclude Include="mbedtls\include\mbedtls\hkdf.h" />
     <ClInclude Include="mbedtls\include\mbedtls\hmac_drbg.h" />
     <ClInclude Include="mbedtls\include\mbedtls\md.h" />
     <ClInclude Include="mbedtls\include\mbedtls\md2.h" />
@@ -260,6 +277,7 @@
     <ClInclude Include="mbedtls\include\mbedtls\memory_buffer_alloc.h" />
     <ClInclude Include="mbedtls\include\mbedtls\net.h" />
     <ClInclude Include="mbedtls\include\mbedtls\net_sockets.h" />
+    <ClInclude Include="mbedtls\include\mbedtls\nist_kw.h" />
     <ClInclude Include="mbedtls\include\mbedtls\oid.h" />
     <ClInclude Include="mbedtls\include\mbedtls\padlock.h" />
     <ClInclude Include="mbedtls\include\mbedtls\pem.h" />
@@ -270,8 +288,11 @@
     <ClInclude Include="mbedtls\include\mbedtls\pk_internal.h" />
     <ClInclude Include="mbedtls\include\mbedtls\platform.h" />
     <ClInclude Include="mbedtls\include\mbedtls\platform_time.h" />
+    <ClInclude Include="mbedtls\include\mbedtls\platform_util.h" />
+    <ClInclude Include="mbedtls\include\mbedtls\poly1305.h" />
     <ClInclude Include="mbedtls\include\mbedtls\ripemd160.h" />
     <ClInclude Include="mbedtls\include\mbedtls\rsa.h" />
+    <ClInclude Include="mbedtls\include\mbedtls\rsa_internal.h" />
     <ClInclude Include="mbedtls\include\mbedtls\sha1.h" />
     <ClInclude Include="mbedtls\include\mbedtls\sha256.h" />
     <ClInclude Include="mbedtls\include\mbedtls\sha512.h" />
@@ -295,79 +316,318 @@
   <ItemGroup>
     <ClCompile Include="CryptorFactory.cpp" />
     <ClCompile Include="mbedtls\library\aes.c">
-      <EnforceTypeConversionRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </EnforceTypeConversionRules>
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
-    <ClCompile Include="mbedtls\library\aesni.c" />
-    <ClCompile Include="mbedtls\library\arc4.c" />
-    <ClCompile Include="mbedtls\library\asn1parse.c" />
-    <ClCompile Include="mbedtls\library\asn1write.c" />
-    <ClCompile Include="mbedtls\library\base64.c" />
-    <ClCompile Include="mbedtls\library\bignum.c" />
-    <ClCompile Include="mbedtls\library\blowfish.c" />
-    <ClCompile Include="mbedtls\library\camellia.c" />
-    <ClCompile Include="mbedtls\library\ccm.c" />
-    <ClCompile Include="mbedtls\library\certs.c" />
-    <ClCompile Include="mbedtls\library\cipher.c" />
-    <ClCompile Include="mbedtls\library\cipher_wrap.c" />
-    <ClCompile Include="mbedtls\library\cmac.c" />
-    <ClCompile Include="mbedtls\library\ctr_drbg.c" />
-    <ClCompile Include="mbedtls\library\debug.c" />
-    <ClCompile Include="mbedtls\library\des.c" />
-    <ClCompile Include="mbedtls\library\dhm.c" />
-    <ClCompile Include="mbedtls\library\ecdh.c" />
-    <ClCompile Include="mbedtls\library\ecdsa.c" />
-    <ClCompile Include="mbedtls\library\ecjpake.c" />
-    <ClCompile Include="mbedtls\library\ecp.c" />
-    <ClCompile Include="mbedtls\library\ecp_curves.c" />
-    <ClCompile Include="mbedtls\library\entropy.c" />
-    <ClCompile Include="mbedtls\library\entropy_poll.c" />
-    <ClCompile Include="mbedtls\library\error.c" />
-    <ClCompile Include="mbedtls\library\gcm.c" />
-    <ClCompile Include="mbedtls\library\havege.c" />
-    <ClCompile Include="mbedtls\library\hmac_drbg.c" />
-    <ClCompile Include="mbedtls\library\md.c" />
-    <ClCompile Include="mbedtls\library\md2.c" />
-    <ClCompile Include="mbedtls\library\md4.c" />
-    <ClCompile Include="mbedtls\library\md5.c" />
-    <ClCompile Include="mbedtls\library\md_wrap.c" />
-    <ClCompile Include="mbedtls\library\memory_buffer_alloc.c" />
-    <ClCompile Include="mbedtls\library\net_sockets.c" />
-    <ClCompile Include="mbedtls\library\oid.c" />
-    <ClCompile Include="mbedtls\library\padlock.c" />
-    <ClCompile Include="mbedtls\library\pem.c" />
-    <ClCompile Include="mbedtls\library\pk.c" />
-    <ClCompile Include="mbedtls\library\pkcs11.c" />
-    <ClCompile Include="mbedtls\library\pkcs12.c" />
-    <ClCompile Include="mbedtls\library\pkcs5.c" />
-    <ClCompile Include="mbedtls\library\pkparse.c" />
-    <ClCompile Include="mbedtls\library\pkwrite.c" />
-    <ClCompile Include="mbedtls\library\pk_wrap.c" />
-    <ClCompile Include="mbedtls\library\platform.c" />
-    <ClCompile Include="mbedtls\library\ripemd160.c" />
-    <ClCompile Include="mbedtls\library\rsa.c" />
-    <ClCompile Include="mbedtls\library\sha1.c" />
-    <ClCompile Include="mbedtls\library\sha256.c" />
-    <ClCompile Include="mbedtls\library\sha512.c" />
-    <ClCompile Include="mbedtls\library\ssl_cache.c" />
-    <ClCompile Include="mbedtls\library\ssl_ciphersuites.c" />
-    <ClCompile Include="mbedtls\library\ssl_cli.c" />
-    <ClCompile Include="mbedtls\library\ssl_cookie.c" />
-    <ClCompile Include="mbedtls\library\ssl_srv.c" />
-    <ClCompile Include="mbedtls\library\ssl_ticket.c" />
-    <ClCompile Include="mbedtls\library\ssl_tls.c" />
-    <ClCompile Include="mbedtls\library\threading.c" />
-    <ClCompile Include="mbedtls\library\timing.c" />
-    <ClCompile Include="mbedtls\library\version.c" />
-    <ClCompile Include="mbedtls\library\version_features.c" />
-    <ClCompile Include="mbedtls\library\x509.c" />
-    <ClCompile Include="mbedtls\library\x509write_crt.c" />
-    <ClCompile Include="mbedtls\library\x509write_csr.c" />
-    <ClCompile Include="mbedtls\library\x509_create.c" />
-    <ClCompile Include="mbedtls\library\x509_crl.c" />
-    <ClCompile Include="mbedtls\library\x509_crt.c" />
-    <ClCompile Include="mbedtls\library\x509_csr.c" />
-    <ClCompile Include="mbedtls\library\xtea.c" />
+    <ClCompile Include="mbedtls\library\aesni.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\arc4.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\asn1parse.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\asn1write.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\base64.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\bignum.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\blowfish.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\camellia.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ccm.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\certs.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\chacha20.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\chachapoly.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\cipher.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\cipher_wrap.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\cmac.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ctr_drbg.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\debug.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\des.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\dhm.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ecdh.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ecdsa.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ecjpake.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ecp.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ecp_curves.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\entropy.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\entropy_poll.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\error.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\gcm.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\havege.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\hkdf.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\hmac_drbg.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\md.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\md2.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\md4.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\md5.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\md_wrap.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\memory_buffer_alloc.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\net_sockets.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x0603;_WINRT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\nist_kw.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\oid.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\padlock.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\pem.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\pk.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\pkcs11.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\pkcs12.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\pkcs5.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\pkparse.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\pkwrite.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\pk_wrap.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\platform.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\platform_util.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\poly1305.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ripemd160.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\rsa.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\rsa_internal.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\sha1.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\sha256.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\sha512.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ssl_cache.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ssl_ciphersuites.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ssl_cli.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ssl_cookie.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ssl_srv.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ssl_ticket.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\ssl_tls.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\threading.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\timing.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\version.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\version_features.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\x509.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\x509write_crt.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\x509write_csr.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\x509_create.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\x509_crl.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\x509_crt.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\x509_csr.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="mbedtls\library\xtea.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+    </ClCompile>
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -375,8 +635,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <CallingConvention Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Cdecl</CallingConvention>
     </ClCompile>
-    <ClCompile Include="MbedStreamCryptor.cpp" />
+    <ClCompile Include="MbedStreamCryptor.cpp">
+      <CallingConvention Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Cdecl</CallingConvention>
+    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
