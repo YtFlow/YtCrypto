@@ -56,6 +56,11 @@ namespace YtCrypto {
 			mbedtls_cipher_type = MBEDTLS_CIPHER_CAMELLIA_256_CFB128;
 			keyLen = 32;
 		}
+		else if (method == "chacha20-ietf") {
+			mbedtls_cipher_type = MBEDTLS_CIPHER_CHACHA20;
+			keyLen = 32;
+			ivLen = 12;
+		}
 		else {
 			throw ref new Platform::NotImplementedException(L"The given cipher is not supported yet");
 		}
