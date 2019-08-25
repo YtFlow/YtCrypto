@@ -19,7 +19,7 @@ namespace YtCrypto
 		mbedtls_cipher_setkey(decctx, key, keyBitLen, MBEDTLS_DECRYPT);
 		mbedtls_cipher_set_iv(encctx, iv, ivLen);
 	}
-	unsigned int MbedStreamCryptor::Encrypt(const Platform::Array<uint8, 1u>^ encData, size_t encDataLen, Platform::WriteOnlyArray<uint8, 1u>^ outData)
+	size_t MbedStreamCryptor::Encrypt(const Platform::Array<uint8, 1u>^ encData, size_t encDataLen, Platform::WriteOnlyArray<uint8, 1u>^ outData)
 	{
 		size_t len;
 		size_t realDataOffset = 0;
@@ -33,7 +33,7 @@ namespace YtCrypto
 		mbedtls_cipher_update(encctx, encData->begin(), encData->Length, outData->begin() + realDataOffset, &len);
 		return len + realDataOffset;
 	}
-	unsigned int MbedStreamCryptor::Decrypt(const Platform::Array<uint8, 1u>^ decData, size_t decDataLen, Platform::WriteOnlyArray<uint8, 1u>^ outData)
+	size_t MbedStreamCryptor::Decrypt(const Platform::Array<uint8, 1u>^ decData, size_t decDataLen, Platform::WriteOnlyArray<uint8, 1u>^ outData)
 	{
 		auto realDecData = decData->begin();
 		auto realLen = decDataLen;
