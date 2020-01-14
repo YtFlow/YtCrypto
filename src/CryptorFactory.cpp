@@ -7,13 +7,16 @@
 
 namespace YtCrypto {
 	ICryptor ^ CryptorFactory::CreateCryptor() {
-		uint8 *iv = GenerateIv(ivLen);
-		if (iv == NULL) {
+		auto iv = std::unique_ptr<uint8>(Common::GenerateIv(ivLen));
+		if (iv == nullptr) {
 			throw ref new Platform::FailureException(L"Cannot generate IV");
 		}
+
+		// https://github.com/shadowsocks/shadowsocks-windows/blob/master/shadowsocks-csharp/Encryption/Stream/StreamMbedTLSEncryptor.cs#L61
+
 		switch (provider) {
 		case CryptorProvider::Mbedtls:
-			return ref new MbedStreamCryptor(key, keyLen * 8, iv, ivLen, mbedtls_cipher_type);
+			return ref new MbedStreamCryptor(key, keyLen, std::move(iv), ivLen, mbedtls_cipher_type);
 		default:
 			throw ref new Platform::NotImplementedException(L"Cannot create a cryptor with an unknown provider");
 		}
@@ -61,54 +64,23 @@ namespace YtCrypto {
 			keyLen = 32;
 			ivLen = 12;
 		}
+		else if (method == "rc4-md5") {
+			mbedtls_cipher_type = MBEDTLS_CIPHER_ARC4_128;
+		}
 		else {
 			throw ref new Platform::NotImplementedException(L"The given cipher is not supported yet");
 		}
 
 		// Derive key
-		key = LegacyDeriveKey(password->Data, password->Length, keyLen);
+		key = std::shared_ptr<uint8>(Common::LegacyDeriveKey(password->Data, password->Length, keyLen));
+		if (key == nullptr) {
+			throw ref new Platform::FailureException(L"Cannot derive key");
+		}
 	}
 
 	CryptorFactory::~CryptorFactory()
 	{
 		// Key data are shared among all cryptor instances
-		free(key);
+		// free(key);
 	}
-
-	// https://github.com/shadowsocks/shadowsocks-windows/blob/master/shadowsocks-csharp/Encryption/Stream/StreamEncryptor.cs#L71
-	uint8 * CryptorFactory::LegacyDeriveKey(uint8 * password, size_t passwordLen, size_t keyLen)
-	{
-		uint8 *key = (uint8*)malloc(keyLen);
-		size_t resultLen = passwordLen + MD5_LEN;
-		uint8 *result = (uint8*)malloc(resultLen);
-		size_t i = 0;
-		uint8 md5sum[MD5_LEN];
-		while (i < keyLen) {
-			if (i == 0) {
-				mbedtls_md5(password, passwordLen, md5sum);
-			}
-			else {
-				// passwordLen + MD5_LEN >= MD5_LEN
-				memcpy_s(result, resultLen, md5sum, MD5_LEN);
-				// passwordLen == passwordLen
-				memcpy_s(result + MD5_LEN, passwordLen, password, passwordLen);
-				mbedtls_md5(result, resultLen, md5sum);
-			}
-			// keyLen - i >= min(MD5_LEN, keyLen - i)
-			memcpy_s(key + i, keyLen - i, md5sum, min(MD5_LEN, keyLen - i));
-			i += MD5_LEN;
-		}
-		free(result);
-		return key;
-	}
-	uint8 * CryptorFactory::GenerateIv(size_t ivLen)
-	{
-		uint8 *ret = (uint8*)malloc(ivLen);
-		if (FAILED(BCryptGenRandom(nullptr, ret, ivLen, BCRYPT_USE_SYSTEM_PREFERRED_RNG))) {
-			free(ret);
-			ret = NULL;
-		}
-		return ret;
-	}
-
 }

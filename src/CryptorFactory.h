@@ -1,9 +1,8 @@
 #pragma once
+#include <memory>
 #include "ICryptor.h"
 #include "MbedStreamCryptor.h"
-#include "mbedtls\cipher.h"
 
-constexpr size_t MD5_LEN = 16;
 namespace YtCrypto {
 	enum CryptorProvider {
 		Mbedtls
@@ -11,10 +10,8 @@ namespace YtCrypto {
 	public ref class CryptorFactory sealed
 	{
 	private:
-		static uint8* LegacyDeriveKey(uint8* password, size_t passwordLen, size_t keyLen);
-		static uint8* GenerateIv(size_t ivLen);
 		CryptorProvider provider;
-		uint8* key;
+		std::shared_ptr<uint8> key;
 		size_t keyLen;
 		size_t ivLen;
 		mbedtls_cipher_type_t mbedtls_cipher_type;
