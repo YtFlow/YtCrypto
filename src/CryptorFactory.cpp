@@ -12,8 +12,6 @@ namespace YtCrypto {
 			throw ref new Platform::FailureException(L"Cannot generate IV");
 		}
 
-		// https://github.com/shadowsocks/shadowsocks-windows/blob/master/shadowsocks-csharp/Encryption/Stream/StreamMbedTLSEncryptor.cs#L61
-
 		switch (provider) {
 		case CryptorProvider::Mbedtls:
 			return ref new MbedStreamCryptor(key, keyLen, std::move(iv), ivLen, mbedtls_cipher_type);

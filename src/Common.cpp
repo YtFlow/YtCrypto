@@ -32,6 +32,7 @@ namespace YtCrypto {
 		free(key);
 		return NULL;
 	}
+
 	uint8* Common::GenerateIv(size_t ivLen)
 	{
 		uint8* ret = (uint8*)malloc(ivLen);
@@ -42,17 +43,22 @@ namespace YtCrypto {
 		return ret;
 	}
 
+	// https://github.com/shadowsocks/shadowsocks-windows/blob/master/shadowsocks-csharp/Encryption/Stream/StreamMbedTLSEncryptor.cs#L61
 	uint8* Common::GenerateKeyMd5(uint8* key, size_t keyLen, uint8* iv, size_t ivLen)
 	{
 		uint8* realKey = (uint8*)malloc(MD5_LEN);
 		mbedtls_md5_context md5Ctx;
 		mbedtls_md5_init(&md5Ctx);
-		if (mbedtls_md5_starts_ret(&md5Ctx)) return NULL;
-		if (mbedtls_md5_update_ret(&md5Ctx, &*key, keyLen)) NULL;
-		if (mbedtls_md5_update_ret(&md5Ctx, &*iv, ivLen)) NULL;
-		if (mbedtls_md5_finish_ret(&md5Ctx, &*realKey)) NULL;
+		if (mbedtls_md5_starts_ret(&md5Ctx)) goto ERR;
+		if (mbedtls_md5_update_ret(&md5Ctx, &*key, keyLen)) goto ERR;
+		if (mbedtls_md5_update_ret(&md5Ctx, &*iv, ivLen)) goto ERR;
+		if (mbedtls_md5_finish_ret(&md5Ctx, &*realKey)) goto ERR;
 		mbedtls_md5_free(&md5Ctx);
 		return realKey;
+
+	ERR:
+		mbedtls_md5_free(&md5Ctx);
+		return NULL;
 	}
 }
 
