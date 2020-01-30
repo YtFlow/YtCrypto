@@ -89,6 +89,7 @@
     <ClCompile Include="mbedtls\library\rsa_internal.c" />
     <ClCompile Include="CryptorFactory.cpp" />
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="CipherInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -174,5 +175,7 @@
     <ClInclude Include="mbedtls\include\mbedtls\poly1305.h" />
     <ClInclude Include="mbedtls\include\mbedtls\rsa_internal.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="CipherInfo.h" />
+    <ClInclude Include="CryptorProvider.h" />
   </ItemGroup>
 </Project>

@@ -1,20 +1,16 @@
 #pragma once
 #include <memory>
+#include "CipherInfo.h"
 #include "ICryptor.h"
 #include "MbedStreamCryptor.h"
 
 namespace YtCrypto {
-	enum CryptorProvider {
-		Mbedtls
-	};
 	public ref class CryptorFactory sealed
 	{
 	private:
-		CryptorProvider provider;
+		CipherInfo cipherInfo;
 		std::shared_ptr<uint8> key;
-		size_t keyLen;
-		size_t ivLen;
-		mbedtls_cipher_type_t mbedtls_cipher_type;
+		static CipherInfo FindCipherInfo(std::wstring cipherName);
 	public:
 		ICryptor^ CreateCryptor();
 		CryptorFactory(Platform::String^ method, const Platform::Array<uint8, 1>^ password);

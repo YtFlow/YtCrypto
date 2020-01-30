@@ -233,8 +233,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CipherInfo.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CryptorFactory.h" />
+    <ClInclude Include="CryptorProvider.h" />
     <ClInclude Include="ICryptor.h" />
     <ClInclude Include="mbedtls\include\mbedtls\aes.h" />
     <ClInclude Include="mbedtls\include\mbedtls\aesni.h" />
@@ -318,6 +320,7 @@
     <ClInclude Include="MbedStreamCryptor.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CipherInfo.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CryptorFactory.cpp" />
     <ClCompile Include="mbedtls\library\aes.c">

@@ -36,7 +36,7 @@ namespace YtCrypto {
 	uint8* Common::GenerateIv(size_t ivLen)
 	{
 		uint8* ret = (uint8*)malloc(ivLen);
-		if (FAILED(BCryptGenRandom(nullptr, ret, ivLen, BCRYPT_USE_SYSTEM_PREFERRED_RNG))) {
+		if (FAILED(BCryptGenRandom(nullptr, ret, (ULONG)ivLen, BCRYPT_USE_SYSTEM_PREFERRED_RNG))) {
 			free(ret);
 			ret = NULL;
 		}
@@ -59,6 +59,13 @@ namespace YtCrypto {
 	ERR:
 		mbedtls_md5_free(&md5Ctx);
 		return NULL;
+	}
+
+	// https://github.com/shadowsocks/libsscrypto/blob/master/libsscrypto/hkdf.c#L87
+	int Common::DeriveAuthSessionKeySha1(uint8* salt, size_t saltLen, uint8* masterKey, size_t masterKeyLen, uint8* sessionKey, size_t sessionKeyLen)
+	{
+		auto md = mbedtls_md_info_from_type(MBEDTLS_MD_SHA1);
+		return mbedtls_hkdf(md, salt, saltLen, masterKey, masterKeyLen, (const unsigned char *)SS_AEAD_INFO, SS_AEAD_INFO_LEN, sessionKey, sessionKeyLen);
 	}
 }
 
