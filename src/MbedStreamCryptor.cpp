@@ -52,16 +52,16 @@ namespace YtCrypto
 		return Encrypt((uint8*)(void*)encData, encDataLen, (uint8*)(void*)outData, outDataLen);
 	}
 
-	size_t MbedStreamCryptor::Decrypt(const Platform::Array<uint8, 1u>^ decData, size_t decDataLen, Platform::WriteOnlyArray<uint8, 1u>^ outData)
+	size_t MbedStreamCryptor::Decrypt(uint8* decData, size_t decDataLen, uint8* outData, size_t outDataLen)
 	{
-		auto realDecData = decData->begin();
+		auto realDecData = decData;
 		auto realLen = decDataLen;
 		if (!dec_iv_inited) {
 			if (decDataLen < ivLen) throw ref new InvalidArgumentException(L"IV not enough");
 			dec_iv_inited = true;
-			mbedtls_cipher_set_iv(&decctx, decData->begin(), ivLen);
+			mbedtls_cipher_set_iv(&decctx, decData, ivLen);
 			if (decctx.cipher_info->type == MBEDTLS_CIPHER_ARC4_128) {
-				auto realDecKey = std::unique_ptr<uint8>(Common::GenerateKeyMd5(&*key, keyLen, decData->begin(), ivLen));
+				auto realDecKey = std::unique_ptr<uint8>(Common::GenerateKeyMd5(&*key, keyLen, decData, ivLen));
 				if (realDecKey == nullptr) {
 					throw ref new Platform::FailureException(L"Cannot derive dec key using md5");
 				}
@@ -71,8 +71,18 @@ namespace YtCrypto
 			realLen -= ivLen;
 		}
 		size_t len;
-		mbedtls_cipher_update(&decctx, realDecData, realLen, outData->begin(), &len);
+		mbedtls_cipher_update(&decctx, realDecData, realLen, outData, &len);
 		return len;
+	}
+
+	size_t MbedStreamCryptor::Decrypt(const Platform::Array<uint8, 1u>^ decData, size_t decDataLen, Platform::WriteOnlyArray<uint8, 1u>^ outData)
+	{
+		return Decrypt(decData->begin(), decData->Length, outData->begin(), outData->Length);
+	}
+
+	size_t MbedStreamCryptor::Decrypt(IntPtrAbi decData, size_t decDataLen, IntPtrAbi outData, size_t outDataLen)
+	{
+		return Decrypt((uint8*)(void*)decData, decDataLen, (uint8*)(void*)outData, outDataLen);
 	}
 
 	MbedStreamCryptor::~MbedStreamCryptor()
