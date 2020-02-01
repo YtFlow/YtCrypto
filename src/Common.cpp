@@ -44,7 +44,7 @@ namespace YtCrypto {
 	}
 
 	// https://github.com/shadowsocks/shadowsocks-windows/blob/master/shadowsocks-csharp/Encryption/Stream/StreamMbedTLSEncryptor.cs#L61
-	bool Common::GenerateKeyMd5(const uint8* key, size_t keyLen, const uint8* iv, size_t ivLen, uint8* outBuf)
+	bool Common::GenerateKeyMd5(const uint8* key, size_t keyLen, const uint8* iv, size_t ivLen, uint8 outBuf[MD5_LEN])
 	{
 		mbedtls_md5_context md5Ctx;
 		mbedtls_md5_init(&md5Ctx);
@@ -65,6 +65,19 @@ namespace YtCrypto {
 	{
 		auto md = mbedtls_md_info_from_type(MBEDTLS_MD_SHA1);
 		return mbedtls_hkdf(md, salt, saltLen, masterKey, masterKeyLen, (const unsigned char *)SS_AEAD_INFO, SS_AEAD_INFO_LEN, sessionKey, sessionKeyLen);
+	}
+
+	int Common::Sha224(const uint8* input, size_t size, uint8 outBuf[32])
+	{
+		return mbedtls_sha256_ret(input, size, outBuf, 1);
+	}
+
+	int Common::Sha224(const Platform::Array<uint8, 1u>^ key, Platform::WriteOnlyArray<uint8, 1u>^ outBuf)
+	{
+		if (outBuf->Length < 32) {
+			throw ref new Platform::InvalidArgumentException(L"SSH224 must have an output buffer of at least 32 bytes");
+		}
+		return Sha224(key->begin(), key->Length, outBuf->begin());
 	}
 }
 
