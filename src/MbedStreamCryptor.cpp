@@ -16,11 +16,11 @@ namespace YtCrypto
 		mbedtls_cipher_setup(&decctx, mbedtls_cipher_info_from_type(cipher_type));
 
 		if (cipher_type == mbedtls_cipher_type_t::MBEDTLS_CIPHER_ARC4_128) {
-			auto realEncKey = std::unique_ptr<uint8>(Common::GenerateKeyMd5(&*key, keyLen, &*(this->iv), ivLen));
-			if (realEncKey == nullptr) {
+			std::array<uint8, MD5_LEN> realEncKey;
+			if (!Common::GenerateKeyMd5(&*key, keyLen, &*(this->iv), ivLen, realEncKey.data())) {
 				throw ref new Platform::FailureException(L"Cannot derive enc key using md5");
 			}
-			mbedtls_cipher_setkey(&encctx, &*realEncKey, 8 * (int)keyLen, MBEDTLS_ENCRYPT);
+			mbedtls_cipher_setkey(&encctx, realEncKey.data(), 8 * (int)keyLen, MBEDTLS_ENCRYPT);
 		}
 		else {
 			mbedtls_cipher_setkey(&encctx, &*key, 8 * (int)keyLen, MBEDTLS_ENCRYPT);
@@ -61,11 +61,11 @@ namespace YtCrypto
 			dec_iv_inited = true;
 			mbedtls_cipher_set_iv(&decctx, decData, ivLen);
 			if (decctx.cipher_info->type == MBEDTLS_CIPHER_ARC4_128) {
-				auto realDecKey = std::unique_ptr<uint8>(Common::GenerateKeyMd5(&*key, keyLen, decData, ivLen));
-				if (realDecKey == nullptr) {
+				std::array<uint8, MD5_LEN> realDecKey;
+				if (!Common::GenerateKeyMd5(&*key, keyLen, decData, ivLen, realDecKey.data())) {
 					throw ref new Platform::FailureException(L"Cannot derive dec key using md5");
 				}
-				mbedtls_cipher_setkey(&decctx, &*realDecKey, 8 * (int)keyLen, MBEDTLS_DECRYPT);
+				mbedtls_cipher_setkey(&decctx, realDecKey.data(), 8 * (int)keyLen, MBEDTLS_DECRYPT);
 			}
 			realDecData += ivLen;
 			realLen -= ivLen;

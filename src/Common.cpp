@@ -2,7 +2,7 @@
 
 namespace YtCrypto {
 	// https://github.com/shadowsocks/shadowsocks-windows/blob/master/shadowsocks-csharp/Encryption/Stream/StreamEncryptor.cs#L71
-	uint8* Common::LegacyDeriveKey(uint8* password, size_t passwordLen, size_t keyLen)
+	uint8* Common::LegacyDeriveKey(const uint8* password, size_t passwordLen, size_t keyLen)
 	{
 		uint8* key = (uint8*)malloc(keyLen);
 		size_t resultLen = passwordLen + MD5_LEN;
@@ -44,25 +44,24 @@ namespace YtCrypto {
 	}
 
 	// https://github.com/shadowsocks/shadowsocks-windows/blob/master/shadowsocks-csharp/Encryption/Stream/StreamMbedTLSEncryptor.cs#L61
-	uint8* Common::GenerateKeyMd5(uint8* key, size_t keyLen, uint8* iv, size_t ivLen)
+	bool Common::GenerateKeyMd5(const uint8* key, size_t keyLen, const uint8* iv, size_t ivLen, uint8* outBuf)
 	{
-		uint8* realKey = (uint8*)malloc(MD5_LEN);
 		mbedtls_md5_context md5Ctx;
 		mbedtls_md5_init(&md5Ctx);
 		if (mbedtls_md5_starts_ret(&md5Ctx)) goto ERR;
-		if (mbedtls_md5_update_ret(&md5Ctx, &*key, keyLen)) goto ERR;
-		if (mbedtls_md5_update_ret(&md5Ctx, &*iv, ivLen)) goto ERR;
-		if (mbedtls_md5_finish_ret(&md5Ctx, &*realKey)) goto ERR;
+		if (mbedtls_md5_update_ret(&md5Ctx, key, keyLen)) goto ERR;
+		if (mbedtls_md5_update_ret(&md5Ctx, iv, ivLen)) goto ERR;
+		if (mbedtls_md5_finish_ret(&md5Ctx, outBuf)) goto ERR;
 		mbedtls_md5_free(&md5Ctx);
-		return realKey;
+		return true;
 
 	ERR:
 		mbedtls_md5_free(&md5Ctx);
-		return NULL;
+		return false;
 	}
 
 	// https://github.com/shadowsocks/libsscrypto/blob/master/libsscrypto/hkdf.c#L87
-	int Common::DeriveAuthSessionKeySha1(uint8* salt, size_t saltLen, uint8* masterKey, size_t masterKeyLen, uint8* sessionKey, size_t sessionKeyLen)
+	int Common::DeriveAuthSessionKeySha1(const uint8* salt, size_t saltLen, const uint8* masterKey, size_t masterKeyLen, uint8* sessionKey, size_t sessionKeyLen)
 	{
 		auto md = mbedtls_md_info_from_type(MBEDTLS_MD_SHA1);
 		return mbedtls_hkdf(md, salt, saltLen, masterKey, masterKeyLen, (const unsigned char *)SS_AEAD_INFO, SS_AEAD_INFO_LEN, sessionKey, sessionKeyLen);
