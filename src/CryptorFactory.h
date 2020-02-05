@@ -2,7 +2,7 @@
 #include <memory>
 #include "CipherInfo.h"
 #include "ICryptor.h"
-#include "MbedStreamCryptor.h"
+#include "MbedCryptor.h"
 
 namespace YtCrypto {
 	public ref class CryptorFactory sealed

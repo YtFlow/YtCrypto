@@ -79,7 +79,6 @@
     <ClCompile Include="mbedtls\library\x509write_crt.c" />
     <ClCompile Include="mbedtls\library\x509write_csr.c" />
     <ClCompile Include="mbedtls\library\xtea.c" />
-    <ClCompile Include="MbedStreamCryptor.cpp" />
     <ClCompile Include="mbedtls\library\chacha20.c" />
     <ClCompile Include="mbedtls\library\chachapoly.c" />
     <ClCompile Include="mbedtls\library\hkdf.c" />
@@ -90,6 +89,7 @@
     <ClCompile Include="CryptorFactory.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CipherInfo.cpp" />
+    <ClCompile Include="MbedCryptor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -165,7 +165,6 @@
     <ClInclude Include="mbedtls\include\mbedtls\xtea.h" />
     <ClInclude Include="ICryptor.h" />
     <ClInclude Include="CryptorFactory.h" />
-    <ClInclude Include="MbedStreamCryptor.h" />
     <ClInclude Include="mbedtls\include\mbedtls\aria.h" />
     <ClInclude Include="mbedtls\include\mbedtls\chacha20.h" />
     <ClInclude Include="mbedtls\include\mbedtls\chachapoly.h" />
@@ -177,5 +176,6 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="CipherInfo.h" />
     <ClInclude Include="CryptorProvider.h" />
+    <ClInclude Include="MbedCryptor.h" />
   </ItemGroup>
 </Project>

@@ -16,14 +16,17 @@ namespace YtCrypto {
 	}
 
 	ICryptor^ CryptorFactory::CreateCryptor() {
-		auto iv = std::unique_ptr<uint8>(Common::GenerateIv(cipherInfo.IvLen));
-		if (iv == nullptr) {
-			throw ref new Platform::FailureException(L"Cannot generate IV");
-		}
-
+		std::unique_ptr<uint8> iv, salt;
 		switch (cipherInfo.Provider) {
 		case CryptorProvider::MbedtlsStream:
-			return ref new MbedStreamCryptor(key, cipherInfo.KeyLen, std::move(iv), cipherInfo.IvLen, cipherInfo.CipherType);
+			iv = std::unique_ptr<uint8>(Common::GenerateIv(cipherInfo.IvLen));
+			if (iv == nullptr) {
+				throw ref new Platform::FailureException(L"Cannot generate IV");
+			}
+			return ref new MbedCryptor(key, cipherInfo.KeyLen, std::move(iv), cipherInfo.IvLen, cipherInfo.CipherType);
+		case CryptorProvider::MbedtlsAuth:
+			salt = std::unique_ptr<uint8>(Common::GenerateIv(cipherInfo.SaltLen));
+			return ref new MbedCryptor(key, cipherInfo.KeyLen, std::move(salt), cipherInfo.SaltLen, cipherInfo.CipherType);
 		default:
 			throw ref new Platform::NotImplementedException(L"Cannot create a cryptor with an unknown provider");
 		}

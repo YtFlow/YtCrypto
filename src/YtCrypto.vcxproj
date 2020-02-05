@@ -317,7 +317,7 @@
     <ClInclude Include="mbedtls\include\mbedtls\x509_csr.h" />
     <ClInclude Include="mbedtls\include\mbedtls\xtea.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="MbedStreamCryptor.h" />
+    <ClInclude Include="MbedCryptor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CipherInfo.cpp" />
@@ -645,7 +645,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <CallingConvention Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Cdecl</CallingConvention>
     </ClCompile>
-    <ClCompile Include="MbedStreamCryptor.cpp">
+    <ClCompile Include="MbedCryptor.cpp">
       <CallingConvention Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Cdecl</CallingConvention>
     </ClCompile>
   </ItemGroup>

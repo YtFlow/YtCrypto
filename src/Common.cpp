@@ -36,6 +36,9 @@ namespace YtCrypto {
 	uint8* Common::GenerateIv(size_t ivLen)
 	{
 		uint8* ret = (uint8*)malloc(ivLen);
+		if (ret == nullptr) {
+			throw ref new Platform::FailureException(L"Cannot allocate memory for iv");
+		}
 		if (FAILED(BCryptGenRandom(nullptr, ret, (ULONG)ivLen, BCRYPT_USE_SYSTEM_PREFERRED_RNG))) {
 			free(ret);
 			ret = NULL;
@@ -64,7 +67,7 @@ namespace YtCrypto {
 	int Common::DeriveAuthSessionKeySha1(const uint8* salt, size_t saltLen, const uint8* masterKey, size_t masterKeyLen, uint8* sessionKey, size_t sessionKeyLen)
 	{
 		auto md = mbedtls_md_info_from_type(MBEDTLS_MD_SHA1);
-		return mbedtls_hkdf(md, salt, saltLen, masterKey, masterKeyLen, (const unsigned char *)SS_AEAD_INFO, SS_AEAD_INFO_LEN, sessionKey, sessionKeyLen);
+		return mbedtls_hkdf(md, salt, saltLen, masterKey, masterKeyLen, (const unsigned char*)SS_AEAD_INFO, SS_AEAD_INFO_LEN, sessionKey, sessionKeyLen);
 	}
 
 	int Common::Sha224(const uint8* input, size_t size, uint8 outBuf[32])
@@ -72,12 +75,30 @@ namespace YtCrypto {
 		return mbedtls_sha256_ret(input, size, outBuf, 1);
 	}
 
+	// https://github.com/jedisct1/libsodium/blob/master/src/libsodium/sodium/utils.c#L262
+	/*
+	 * ISC License
+	 *
+	 * Copyright (c) 2013-2020
+	 * Frank Denis <j at pureftpd dot org>
+	 */
+	void Common::SodiumIncrement(unsigned char* n, const size_t nlen)
+	{
+		size_t        i = 0U;
+		uint_fast16_t c = 1U;
+		for (; i < nlen; i++) {
+			c += (uint_fast16_t)n[i];
+			n[i] = (unsigned char)c;
+			c >>= 8;
+		}
+	}
+
 	int Common::Sha224(const Platform::Array<uint8, 1u>^ key, Platform::WriteOnlyArray<uint8, 1u>^ outBuf)
 	{
 		if (outBuf->Length < 32) {
 			throw ref new Platform::InvalidArgumentException(L"SSH224 must have an output buffer of at least 32 bytes");
 		}
-		return Sha224(key->begin(), key->Length, outBuf->begin());
+		return Sha224(key->Data, key->Length, outBuf->Data);
 	}
 }
 
