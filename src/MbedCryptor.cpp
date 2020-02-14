@@ -126,7 +126,7 @@ namespace YtCrypto
 			if (decDataLen < ivLen) throw ref new InvalidArgumentException(L"IV not enough");
 			dec_iv_inited = true;
 			std::vector<uint8> sessionKey(keyLen);
-			auto ret = Common::DeriveAuthSessionKeySha1(decData, decDataLen, &*key, keyLen, sessionKey.data(), sessionKey.size());
+			auto ret = Common::DeriveAuthSessionKeySha1(decData, ivLen, &*key, keyLen, sessionKey.data(), sessionKey.size());
 			if (ret != 0) {
 				throw ref new InvalidArgumentException(L"Cannot derive dec session key, Mbed TLS returned: " + ret.ToString());
 			}
