@@ -3,13 +3,14 @@
 #include "CipherInfo.h"
 #include "ICryptor.h"
 #include "MbedCryptor.h"
+#include "SodiumCryptor.h"
 
 namespace YtCrypto {
 	public ref class CryptorFactory sealed
 	{
 	private:
 		CipherInfo cipherInfo;
-		std::shared_ptr<uint8> key;
+		std::shared_ptr<uint8[]> key;
 		static CipherInfo FindCipherInfo(std::wstring cipherName);
 	public:
 		ICryptor^ CreateCryptor();

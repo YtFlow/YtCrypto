@@ -4,7 +4,9 @@ namespace YtCrypto {
 	enum CryptorProvider
 	{
 		MbedtlsStream,
-		MbedtlsAuth
+		MbedtlsAuth,
+		SodiumStream,
+		SodiumAuth
 	};
 }
 

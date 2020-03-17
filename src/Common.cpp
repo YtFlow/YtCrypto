@@ -75,22 +75,9 @@ namespace YtCrypto {
 		return mbedtls_sha256_ret(input, size, outBuf, 1);
 	}
 
-	// https://github.com/jedisct1/libsodium/blob/master/src/libsodium/sodium/utils.c#L262
-	/*
-	 * ISC License
-	 *
-	 * Copyright (c) 2013-2020
-	 * Frank Denis <j at pureftpd dot org>
-	 */
 	void Common::SodiumIncrement(unsigned char* n, const size_t nlen)
 	{
-		size_t        i = 0U;
-		uint_fast16_t c = 1U;
-		for (; i < nlen; i++) {
-			c += (uint_fast16_t)n[i];
-			n[i] = (unsigned char)c;
-			c >>= 8;
-		}
+		sodium_increment(n, nlen);
 	}
 
 	int Common::Sha224(const Platform::Array<uint8, 1u>^ key, Platform::WriteOnlyArray<uint8, 1u>^ outBuf)

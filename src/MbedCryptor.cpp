@@ -1,5 +1,4 @@
 ﻿#include <vector>
-#include "pch.h"
 #include "MbedCryptor.h"
 
 using namespace YtCrypto;
@@ -7,7 +6,7 @@ using namespace Platform;
 
 namespace YtCrypto
 {
-	MbedCryptor::MbedCryptor(std::shared_ptr<uint8> key, size_t keyLen, std::unique_ptr<uint8> iv, size_t ivLen, mbedtls_cipher_type_t cipher_type)
+	MbedCryptor::MbedCryptor(std::shared_ptr<uint8[]> key, size_t keyLen, std::unique_ptr<uint8[]> iv, size_t ivLen, mbedtls_cipher_type_t cipher_type)
 		: key(key), iv(std::move(iv)), keyLen(keyLen), ivLen(ivLen)
 	{
 		mbedtls_cipher_init(&encctx);
@@ -16,25 +15,25 @@ namespace YtCrypto
 		mbedtls_cipher_setup(&decctx, mbedtls_cipher_info_from_type(cipher_type));
 
 		if (encctx.cipher_info->mode == MBEDTLS_MODE_GCM || encctx.cipher_info->mode == MBEDTLS_MODE_CHACHAPOLY) {
-			std::vector<uint8> sessionKey(keyLen);
-			auto ret = Common::DeriveAuthSessionKeySha1(&*this->iv, ivLen, &*key, keyLen, sessionKey.data(), sessionKey.size());
+			auto sessionKey = std::make_unique<uint8[]>(keyLen);
+			auto ret = Common::DeriveAuthSessionKeySha1(this->iv.get(), ivLen, key.get(), keyLen, sessionKey.get(), keyLen);
 			if (ret != 0) {
 				throw ref new InvalidArgumentException(L"Cannot derive enc session key, Mbed TLS returned: " + ret.ToString());
 			}
-			mbedtls_cipher_setkey(&encctx, sessionKey.data(), 8 * (int)keyLen, MBEDTLS_ENCRYPT);
+			mbedtls_cipher_setkey(&encctx, sessionKey.get(), 8 * (int)keyLen, MBEDTLS_ENCRYPT);
 		}
 		else if (cipher_type == mbedtls_cipher_type_t::MBEDTLS_CIPHER_ARC4_128) {
 			std::array<uint8, MD5_LEN> realEncKey;
-			if (!Common::GenerateKeyMd5(&*key, keyLen, &*(this->iv), ivLen, realEncKey.data())) {
+			if (!Common::GenerateKeyMd5(key.get(), keyLen, this->iv.get(), ivLen, realEncKey.data())) {
 				throw ref new FailureException(L"Cannot derive enc key using md5");
 			}
 			mbedtls_cipher_setkey(&encctx, realEncKey.data(), 8 * (int)keyLen, MBEDTLS_ENCRYPT);
 		}
 		else {
-			mbedtls_cipher_setkey(&encctx, &*key, 8 * (int)keyLen, MBEDTLS_ENCRYPT);
-			mbedtls_cipher_setkey(&decctx, &*key, 8 * (int)keyLen, MBEDTLS_DECRYPT);
+			mbedtls_cipher_setkey(&encctx, key.get(), 8 * (int)keyLen, MBEDTLS_ENCRYPT);
+			mbedtls_cipher_setkey(&decctx, key.get(), 8 * (int)keyLen, MBEDTLS_DECRYPT);
 		}
-		mbedtls_cipher_set_iv(&encctx, &*(this->iv), ivLen);
+		mbedtls_cipher_set_iv(&encctx, this->iv.get(), ivLen);
 	}
 
 	size_t MbedCryptor::Encrypt(uint8* encData, size_t encDataLen, uint8* outData, size_t outDataLen)
@@ -45,7 +44,7 @@ namespace YtCrypto
 			enc_iv_inited = true;
 			if (outDataLen - encDataLen < ivLen) throw ref new InvalidArgumentException(L"Not enough space for IV");
 			// outData->Length >= ivLen
-			if (memcpy_s(outData, outDataLen, &*iv, ivLen)) throw ref new OutOfBoundsException("Cannot copy iv to outData");
+			if (memcpy_s(outData, outDataLen, iv.get(), ivLen)) throw ref new OutOfBoundsException("Cannot copy iv to outData");
 			realDataOffset += ivLen;
 		}
 		mbedtls_cipher_update(&encctx, encData, encDataLen, outData + realDataOffset, &len);
@@ -70,7 +69,7 @@ namespace YtCrypto
 			mbedtls_cipher_set_iv(&decctx, decData, ivLen);
 			if (decctx.cipher_info->type == MBEDTLS_CIPHER_ARC4_128) {
 				std::array<uint8, MD5_LEN> realDecKey;
-				if (!Common::GenerateKeyMd5(&*key, keyLen, decData, ivLen, realDecKey.data())) {
+				if (!Common::GenerateKeyMd5(key.get(), keyLen, decData, ivLen, realDecKey.data())) {
 					throw ref new FailureException(L"Cannot derive dec key using md5");
 				}
 				mbedtls_cipher_setkey(&decctx, realDecKey.data(), 8 * (int)keyLen, MBEDTLS_DECRYPT);
@@ -102,12 +101,12 @@ namespace YtCrypto
 		}
 		if (!enc_iv_inited) {
 			enc_iv_inited = true;
-			if (memcpy_s(outData, outDataLen, &*iv, ivLen)) throw ref new OutOfBoundsException("Cannot copy iv to outData");
+			if (memcpy_s(outData, outDataLen, iv.get(), ivLen)) throw ref new OutOfBoundsException("Cannot copy iv to outData");
 			outData += ivLen;
 			if (encDataLen == 0) {
 				return ivLen;
 			}
-			encDataLen -= ivLen;
+			outDataLen -= ivLen;
 		}
 		size_t size;
 		auto ret = mbedtls_cipher_auth_encrypt(&encctx, encNonce.data(), encNonce.size(), nullptr, 0, encData, encDataLen, outData, &size, tagData, tagDataSize);
@@ -125,12 +124,12 @@ namespace YtCrypto
 		if (!dec_iv_inited) {
 			if (decDataLen < ivLen) throw ref new InvalidArgumentException(L"IV not enough");
 			dec_iv_inited = true;
-			std::vector<uint8> sessionKey(keyLen);
-			auto ret = Common::DeriveAuthSessionKeySha1(decData, ivLen, &*key, keyLen, sessionKey.data(), sessionKey.size());
+			auto sessionKey = std::make_unique<uint8[]>(keyLen);
+			auto ret = Common::DeriveAuthSessionKeySha1(decData, ivLen, key.get(), keyLen, sessionKey.get(), keyLen);
 			if (ret != 0) {
 				throw ref new InvalidArgumentException(L"Cannot derive dec session key, Mbed TLS returned: " + ret.ToString());
 			}
-			mbedtls_cipher_setkey(&decctx, sessionKey.data(), 8 * (int)keyLen, MBEDTLS_DECRYPT);
+			mbedtls_cipher_setkey(&decctx, sessionKey.get(), 8 * (int)keyLen, MBEDTLS_DECRYPT);
 			mbedtls_cipher_set_iv(&decctx, decData, ivLen);
 			decData += ivLen;
 			decDataLen -= ivLen;
@@ -161,7 +160,12 @@ namespace YtCrypto
 
 	MbedCryptor::~MbedCryptor()
 	{
+		if (encctx.cipher_info->mode == MBEDTLS_MODE_GCM || encctx.cipher_info->mode == MBEDTLS_MODE_CHACHAPOLY) {
+			mbedtls_platform_zeroize(encNonce.data(), encNonce.size());
+			mbedtls_platform_zeroize(decNonce.data(), decNonce.size());
+		}
 		mbedtls_cipher_free(&encctx);
 		mbedtls_cipher_free(&decctx);
+		mbedtls_platform_zeroize(iv.get(), ivLen);
 	}
 }

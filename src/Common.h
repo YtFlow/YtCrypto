@@ -4,6 +4,7 @@
 #include "mbedtls\hkdf.h"
 #include "mbedtls\md.h"
 #include "mbedtls\sha256.h"
+#include "utils.h"
 
 namespace YtCrypto {
 	const char SS_AEAD_INFO[10] = "ss-subkey";

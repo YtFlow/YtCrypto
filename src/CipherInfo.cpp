@@ -13,6 +13,7 @@ namespace YtCrypto {
 		{L"camellia-128-cfb", {CryptorProvider::MbedtlsStream, MBEDTLS_CIPHER_CAMELLIA_128_CFB128, 16, 16}},
 		{L"camellia-192-cfb", {CryptorProvider::MbedtlsStream, MBEDTLS_CIPHER_CAMELLIA_192_CFB128, 24, 16}},
 		{L"camellia-256-cfb", {CryptorProvider::MbedtlsStream, MBEDTLS_CIPHER_CAMELLIA_256_CFB128, 32, 16}},
+		{L"chacha20", {CryptorProvider::SodiumStream, (mbedtls_cipher_type_t)Algorithm::Chacha20, crypto_stream_chacha20_KEYBYTES, crypto_stream_chacha20_NONCEBYTES}},
 		{L"chacha20-ietf", {CryptorProvider::MbedtlsStream, MBEDTLS_CIPHER_CHACHA20, 32, 12}},
 
 		/* AEAD ciphers */

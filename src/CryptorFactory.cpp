@@ -16,17 +16,18 @@ namespace YtCrypto {
 	}
 
 	ICryptor^ CryptorFactory::CreateCryptor() {
-		std::unique_ptr<uint8> iv, salt;
+		std::unique_ptr<uint8[]> iv;
+		iv = std::unique_ptr<uint8[]>(Common::GenerateIv(cipherInfo.IvLen));
+		if (iv == nullptr) {
+			throw ref new Platform::FailureException(L"Cannot generate IV");
+		}
 		switch (cipherInfo.Provider) {
 		case CryptorProvider::MbedtlsStream:
-			iv = std::unique_ptr<uint8>(Common::GenerateIv(cipherInfo.IvLen));
-			if (iv == nullptr) {
-				throw ref new Platform::FailureException(L"Cannot generate IV");
-			}
-			return ref new MbedCryptor(key, cipherInfo.KeyLen, std::move(iv), cipherInfo.IvLen, cipherInfo.CipherType);
 		case CryptorProvider::MbedtlsAuth:
-			salt = std::unique_ptr<uint8>(Common::GenerateIv(cipherInfo.SaltLen));
-			return ref new MbedCryptor(key, cipherInfo.KeyLen, std::move(salt), cipherInfo.SaltLen, cipherInfo.CipherType);
+			return ref new MbedCryptor(key, cipherInfo.KeyLen, std::move(iv), cipherInfo.IvLen, cipherInfo.CipherType);
+			return ref new MbedCryptor(key, cipherInfo.KeyLen, std::move(iv), cipherInfo.IvLen, cipherInfo.CipherType);
+		case CryptorProvider::SodiumStream:
+			return ref new SodiumCryptor(key, cipherInfo.KeyLen, std::move(iv), cipherInfo.IvLen, cipherInfo.CipherType);
 		default:
 			throw ref new Platform::NotImplementedException(L"Cannot create a cryptor with an unknown provider");
 		}
@@ -35,7 +36,7 @@ namespace YtCrypto {
 	CryptorFactory::CryptorFactory(Platform::String^ method, const Platform::Array<uint8, 1>^ password)
 		: cipherInfo(CryptorFactory::FindCipherInfo(std::wstring(method->Data()))) {
 		// Derive key
-		key = std::shared_ptr<uint8>(Common::LegacyDeriveKey(password->Data, password->Length, cipherInfo.KeyLen));
+		key = std::shared_ptr<uint8[]>(Common::LegacyDeriveKey(password->Data, password->Length, cipherInfo.KeyLen));
 		if (key == nullptr) {
 			throw ref new Platform::FailureException(L"Cannot derive key");
 		}
