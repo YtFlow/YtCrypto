@@ -216,7 +216,6 @@
     <ClInclude Include="mbedtls\include\mbedtls\cipher_internal.h" />
     <ClInclude Include="mbedtls\include\mbedtls\cmac.h" />
     <ClInclude Include="mbedtls\include\mbedtls\compat-1.3.h" />
-    <ClInclude Include="mbedtls\include\mbedtls\config.h" />
     <ClInclude Include="mbedtls\include\mbedtls\ctr_drbg.h" />
     <ClInclude Include="mbedtls\include\mbedtls\debug.h" />
     <ClInclude Include="mbedtls\include\mbedtls\des.h" />
@@ -415,6 +414,8 @@
     <ClInclude Include="libsodium\src\libsodium\include\sodium.h" />
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="SodiumCryptor.h" />
+    <ClInclude Include="mbedtlsConfig.h" />
+    <ClInclude Include="mbedtls\include\mbedtls\config.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="libsodium\builds\msvc\resource.rc">
