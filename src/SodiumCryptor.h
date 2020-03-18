@@ -6,6 +6,8 @@
 #include "Common.h"
 #include "Algorithm.h"
 #include "crypto_stream_salsa20.h"
+#include "crypto_stream_chacha20.h"
+#include "crypto_aead_chacha20poly1305.h"
 #include "crypto_aead_xchacha20poly1305.h"
 
 namespace WFM = Windows::Foundation::Metadata;
@@ -22,6 +24,7 @@ namespace YtCrypto
 		bool dec_iv_inited;
 		size_t keyLen;
 		size_t ivLen;
+		size_t nonceLen;
 		std::unique_ptr<uint8[]> encIv;
 		std::unique_ptr<uint8[]> decIv;
 		std::shared_ptr<uint8[]> encKey;
@@ -29,8 +32,10 @@ namespace YtCrypto
 		std::shared_ptr<uint8[]> key;
 		std::vector<uint8> encBuf;
 		std::vector<uint8> decBuf;
-		std::array<uint8, 12> encNonce;
-		std::array<uint8, 12> decNonce;
+		// Cannot use fix-sized std::array here because
+		// xchacha20-ietf-poly1305 uses a nonce of size 24
+		std::unique_ptr<uint8[]> encNonce;
+		std::unique_ptr<uint8[]> decNonce;
 		uint64_t encCounter;
 		uint64_t decCounter;
 		size_t Encrypt(uint8* encData, size_t encDataLen, uint8* outData, size_t outDataLen);
@@ -38,7 +43,10 @@ namespace YtCrypto
 		int EncryptAuth(uint8* encData, int encDataLen, uint8* tagData, size_t tagDataSize, uint8* outData, int outDataLen);
 		int DecryptAuth(uint8* decData, int decDataLen, uint8* tagData, size_t tagDataSize, uint8* outData, int outDataLen);
 	internal:
+		// Stream
 		SodiumCryptor(std::shared_ptr<uint8[]> key, size_t keyLen, std::unique_ptr<uint8[]> iv, size_t ivLen, mbedtls_cipher_type_t cipher_type);
+		// AEAD
+		SodiumCryptor(std::shared_ptr<uint8[]> key, size_t keyLen, std::unique_ptr<uint8[]> iv, size_t ivLen, size_t nonceLen, mbedtls_cipher_type_t cipher_type);
 	public:
 		virtual property uint64 IvLen { virtual uint64 get(); }
 		virtual size_t Encrypt(const Platform::Array<uint8, 1u>^ encData, size_t encDataLen, Platform::WriteOnlyArray<uint8, 1u>^ outData);

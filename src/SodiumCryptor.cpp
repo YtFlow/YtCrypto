@@ -6,21 +6,25 @@ using namespace Platform;
 namespace YtCrypto
 {
 	SodiumCryptor::SodiumCryptor(std::shared_ptr<uint8[]> key, size_t keyLen, std::unique_ptr<uint8[]> iv, size_t ivLen, mbedtls_cipher_type_t cipher_type)
-		: key(key), encIv(std::move(iv)), keyLen(keyLen), ivLen(ivLen), encKey(std::make_unique<uint8[]>(keyLen)), algorithm(static_cast<Algorithm>(cipher_type))
+		: key(key), encIv(std::move(iv)), keyLen(keyLen), ivLen(ivLen),
+		encKey(std::make_unique<uint8[]>(keyLen)),
+		algorithm(static_cast<Algorithm>(cipher_type))
 	{
-		if (cipher_type == Algorithm::Chacha20Poly1305 || cipher_type == Algorithm::XChacha20Poly1305) {
-			encKey = std::make_unique<uint8[]>(keyLen);
-			auto ret = Common::DeriveAuthSessionKeySha1(encIv.get(), ivLen, key.get(), keyLen, encKey.get(), keyLen);
-			if (ret != 0) {
-				throw ref new InvalidArgumentException(L"Cannot derive enc session key, Mbed TLS returned: " + ret.ToString());
-			}
-			encBuf = std::vector<uint8>(SODIUM_BLOCK_SIZE + MAX_BLOCK_SIZE);
-			decBuf = std::vector<uint8>(SODIUM_BLOCK_SIZE + MAX_BLOCK_SIZE);
+	}
+
+	SodiumCryptor::SodiumCryptor(std::shared_ptr<uint8[]> key, size_t keyLen, std::unique_ptr<uint8[]> iv, size_t ivLen, size_t nonceLen, mbedtls_cipher_type_t cipher_type)
+		: key(key), encIv(std::move(iv)), keyLen(keyLen), ivLen(ivLen),
+		encKey(std::make_unique<uint8[]>(keyLen)), nonceLen(nonceLen),
+		encNonce(std::make_unique<uint8[]>(nonceLen)),
+		decNonce(std::make_unique<uint8[]>(nonceLen)),
+		algorithm(static_cast<Algorithm>(cipher_type))
+	{
+		auto ret = Common::DeriveAuthSessionKeySha1(encIv.get(), ivLen, key.get(), keyLen, encKey.get(), keyLen);
+		if (ret != 0) {
+			throw ref new InvalidArgumentException(L"Cannot derive enc session key, Mbed TLS returned: " + ret.ToString());
 		}
-		else {
-			decKey = key;
-			encKey = key;
-		}
+		encBuf = std::vector<uint8>(SODIUM_BLOCK_SIZE + MAX_BLOCK_SIZE);
+		decBuf = std::vector<uint8>(SODIUM_BLOCK_SIZE + MAX_BLOCK_SIZE);
 	}
 
 	size_t SodiumCryptor::Encrypt(uint8* encData, size_t encDataLen, uint8* outData, size_t outDataLen)
@@ -42,7 +46,10 @@ namespace YtCrypto
 		switch (algorithm)
 		{
 		case Algorithm::Salsa20:
-			crypto_stream_salsa20_xor_ic(encBuf.data(), encBuf.data(), encBuf.size(), encIv.get(), encCounter / SODIUM_BLOCK_SIZE, encKey.get());
+			crypto_stream_salsa20_xor_ic(encBuf.data(), encBuf.data(), encBuf.size(), encIv.get(), encCounter / SODIUM_BLOCK_SIZE, key.get());
+			break;
+		case Algorithm::Chacha20:
+			crypto_stream_chacha20_xor_ic(encBuf.data(), encBuf.data(), encBuf.size(), encIv.get(), encCounter / SODIUM_BLOCK_SIZE, key.get());
 			break;
 		default:
 			throw ref new NotImplementedException(L"Unsupported cipher");
@@ -69,7 +76,7 @@ namespace YtCrypto
 			if (decDataLen < ivLen) throw ref new InvalidArgumentException(L"IV not enough");
 			dec_iv_inited = true;
 			decIv = std::make_unique<uint8[]>(ivLen);
-			if (memcpy_s(decIv.get(), ivLen, decData, IvLen)) throw ref new InvalidArgumentException(L"Cannot get iv");
+			if (memcpy_s(decIv.get(), ivLen, decData, ivLen)) throw ref new InvalidArgumentException(L"Cannot get iv");
 			realDecData += ivLen;
 			realLen -= ivLen;
 			if (realLen == 0) {
@@ -85,12 +92,17 @@ namespace YtCrypto
 		switch (algorithm)
 		{
 		case Algorithm::Salsa20:
-			crypto_stream_salsa20_xor_ic(decBuf.data(), decBuf.data(), padding + realLen, decIv.get(), decCounter / SODIUM_BLOCK_SIZE, decKey.get());
+			crypto_stream_salsa20_xor_ic(decBuf.data(), decBuf.data(), padding + realLen, decIv.get(), decCounter / SODIUM_BLOCK_SIZE, key.get());
+			break;
+		case Algorithm::Chacha20:
+			crypto_stream_chacha20_xor_ic(decBuf.data(), decBuf.data(), padding + realLen, decIv.get(), decCounter / SODIUM_BLOCK_SIZE, key.get());
 			break;
 		default:
 			throw ref new InvalidArgumentException(L"Unsupported cipher");
 		}
 
+		if (memcpy_s(outData, outDataLen, decBuf.data() + padding, decBuf.size() - padding)) throw ref new OutOfBoundsException("Cannot copy out data");
+		decCounter += realLen;
 		return realLen;
 	}
 
@@ -122,8 +134,11 @@ namespace YtCrypto
 		int ret;
 		switch (algorithm)
 		{
-		case YtCrypto::XChacha20Poly1305:
-			ret = crypto_aead_xchacha20poly1305_ietf_encrypt_detached(realOutData, tagData, &tagSize, encData, encDataLen, NULL, 0, NULL, encNonce.data(), encKey.get());
+		case Algorithm::Chacha20Poly1305:
+			ret = crypto_aead_chacha20poly1305_encrypt_detached(realOutData, tagData, &tagSize, encData, encDataLen, NULL, 0, NULL, encNonce.get(), encKey.get());
+			break;
+		case Algorithm::XChacha20Poly1305:
+			ret = crypto_aead_xchacha20poly1305_ietf_encrypt_detached(realOutData, tagData, &tagSize, encData, encDataLen, NULL, 0, NULL, encNonce.get(), encKey.get());
 			break;
 		default:
 			throw ref new NotImplementedException("Unsupported cipher");
@@ -132,7 +147,7 @@ namespace YtCrypto
 		if (ret != 0) {
 			return ret;
 		}
-		Common::SodiumIncrement(encNonce.data(), encNonce.size());
+		Common::SodiumIncrement(encNonce.get(), nonceLen);
 		return realOutData - outData + encDataLen;
 	}
 
@@ -149,7 +164,7 @@ namespace YtCrypto
 				throw ref new InvalidArgumentException(L"Cannot derive dec session key, Mbed TLS returned: " + ret.ToString());
 			}
 			decIv = std::make_unique<uint8[]>(ivLen);
-			if (!memcpy_s(decIv.get(), ivLen, decData, ivLen)) throw ref new InvalidArgumentException(L"Cannot get iv");
+			if (memcpy_s(decIv.get(), ivLen, decData, ivLen)) throw ref new InvalidArgumentException(L"Cannot get iv");
 			decData += ivLen;
 			decDataLen -= ivLen;
 			if (decDataLen == 0) {
@@ -158,8 +173,11 @@ namespace YtCrypto
 		}
 		int ret;
 		switch (algorithm) {
+		case Algorithm::Chacha20Poly1305:
+			ret = crypto_aead_chacha20poly1305_decrypt_detached(outData, NULL, decData, decDataLen, tagData, NULL, 0, decNonce.get(), decKey.get());
+			break;
 		case Algorithm::XChacha20Poly1305:
-			ret = crypto_aead_xchacha20poly1305_ietf_decrypt_detached(outData, NULL, decData, decDataLen, tagData, NULL, 0, decNonce.data(), decKey.get());
+			ret = crypto_aead_xchacha20poly1305_ietf_decrypt_detached(outData, NULL, decData, decDataLen, tagData, NULL, 0, decNonce.get(), decKey.get());
 			break;
 		default:
 			throw ref new NotImplementedException("Unsupported cipher");
@@ -167,7 +185,7 @@ namespace YtCrypto
 		if (ret != 0) {
 			return ret;
 		}
-		Common::SodiumIncrement(decNonce.data(), decNonce.size());
+		Common::SodiumIncrement(decNonce.get(), nonceLen);
 		return decDataLen;
 	}
 
@@ -186,14 +204,16 @@ namespace YtCrypto
 	SodiumCryptor::~SodiumCryptor()
 	{
 		mbedtls_platform_zeroize(encIv.get(), ivLen);
-		mbedtls_platform_zeroize(decIv.get(), ivLen);
-		if (algorithm == Algorithm::Chacha20Poly1305 || algorithm == Algorithm::XChacha20Poly1305) {
-			mbedtls_platform_zeroize(encNonce.data(), encNonce.size());
-			mbedtls_platform_zeroize(decNonce.data(), decNonce.size());
+		if (decIv != nullptr) {
+			mbedtls_platform_zeroize(decIv.get(), ivLen);
 		}
-		else {
+		if (nonceLen == 0) {
 			mbedtls_platform_zeroize(encBuf.data(), encBuf.size());
 			mbedtls_platform_zeroize(decBuf.data(), decBuf.size());
+		}
+		else {
+			mbedtls_platform_zeroize(encNonce.get(), nonceLen);
+			mbedtls_platform_zeroize(decNonce.get(), nonceLen);
 		}
 	}
 }

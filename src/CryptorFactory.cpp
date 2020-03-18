@@ -25,9 +25,10 @@ namespace YtCrypto {
 		case CryptorProvider::MbedtlsStream:
 		case CryptorProvider::MbedtlsAuth:
 			return ref new MbedCryptor(key, cipherInfo.KeyLen, std::move(iv), cipherInfo.IvLen, cipherInfo.CipherType);
-			return ref new MbedCryptor(key, cipherInfo.KeyLen, std::move(iv), cipherInfo.IvLen, cipherInfo.CipherType);
 		case CryptorProvider::SodiumStream:
 			return ref new SodiumCryptor(key, cipherInfo.KeyLen, std::move(iv), cipherInfo.IvLen, cipherInfo.CipherType);
+		case CryptorProvider::SodiumAuth:
+			return ref new SodiumCryptor(key, cipherInfo.KeyLen, std::move(iv), cipherInfo.IvLen, cipherInfo.NonceLen, cipherInfo.CipherType);
 		default:
 			throw ref new Platform::NotImplementedException(L"Cannot create a cryptor with an unknown provider");
 		}

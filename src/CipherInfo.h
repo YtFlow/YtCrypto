@@ -3,6 +3,9 @@
 #include <unordered_map>
 #include "mbedtls\cipher.h"
 #include "crypto_stream_chacha20.h"
+#include "crypto_stream_salsa20.h"
+#include "crypto_aead_chacha20poly1305.h"
+#include "crypto_aead_xchacha20poly1305.h"
 #include "CryptorProvider.h"
 #include "Algorithm.h"
 
@@ -20,8 +23,6 @@ namespace YtCrypto {
 		CryptorProvider Provider;
 		mbedtls_cipher_type_t CipherType;
 		size_t KeyLen;
-
-		/* Defined for stream ciphers */
 		size_t IvLen;
 
 		/* Defined for AEAD ciphers */
