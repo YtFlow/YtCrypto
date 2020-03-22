@@ -1,0 +1,10 @@
+import "ICryptor.idl";
+
+namespace YtCrypto
+{
+	runtimeclass CryptorFactory
+	{
+		static CryptorFactory CreateFactory(String method, UInt8[] password);
+		ICryptor CreateCryptor();
+	}
+}

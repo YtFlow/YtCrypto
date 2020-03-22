@@ -1,0 +1,9 @@
+import "ICryptor.idl";
+
+namespace YtCrypto
+{
+	[default_interface]
+	runtimeclass SodiumCryptor: ICryptor
+	{
+	}
+}

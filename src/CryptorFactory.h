@@ -1,20 +1,28 @@
 #pragma once
-#include <memory>
+#include "CryptorFactory.g.h"
 #include "CipherInfo.h"
-#include "ICryptor.h"
+#include "Common.h"
 #include "MbedCryptor.h"
 #include "SodiumCryptor.h"
 
-namespace YtCrypto {
-	public ref class CryptorFactory sealed
-	{
-	private:
-		CipherInfo cipherInfo;
-		std::shared_ptr<uint8[]> key;
-		static CipherInfo FindCipherInfo(std::wstring cipherName);
-	public:
-		ICryptor^ CreateCryptor();
-		CryptorFactory(Platform::String^ method, const Platform::Array<uint8, 1>^ password);
-		virtual ~CryptorFactory();
-	};
+using namespace YtCrypto;
+
+namespace winrt::YtCrypto::implementation
+{
+    struct CryptorFactory : CryptorFactoryT<CryptorFactory>
+    {
+    private:
+		const CipherInfo& cipherInfo;
+		std::shared_ptr<uint8_t[]> key;
+    public:
+        CryptorFactory(std::shared_ptr<uint8_t[]> key, const CipherInfo& cipherInfo) noexcept;
+        static YtCrypto::CryptorFactory CreateFactory(hstring const& method, array_view<uint8_t const> password);
+        ICryptor CreateCryptor();
+    };
+}
+namespace winrt::YtCrypto::factory_implementation
+{
+    struct CryptorFactory : CryptorFactoryT<CryptorFactory, implementation::CryptorFactory>
+    {
+    };
 }

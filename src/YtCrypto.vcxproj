@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\..\packages\Microsoft.Windows.CppWinRT.2.0.200316.3\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\..\..\packages\Microsoft.Windows.CppWinRT.2.0.200316.3\build\native\Microsoft.Windows.CppWinRT.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM">
       <Configuration>Debug</Configuration>
@@ -37,6 +38,13 @@
     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.15063.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <CppWinRTProjectLanguage>C++/WinRT</CppWinRTProjectLanguage>
+    <CppWinRTRootNamespaceAutoMerge>
+    </CppWinRTRootNamespaceAutoMerge>
+    <CppWinRTOptimized>true</CppWinRTOptimized>
+    <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
+    <CppWinRTModernIDL>
+    </CppWinRTModernIDL>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -132,15 +140,25 @@
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
       <CallingConvention>Cdecl</CallingConvention>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>/nodefaultlib:vccorlibd /nodefaultlib:msvcrtd vccorlibd.lib msvcrtd.lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>YtCrypto.def</ModuleDefinitionFile>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
+    <Midl>
+      <GenerateServerFiles>
+      </GenerateServerFiles>
+      <GenerateClientFiles>
+      </GenerateClientFiles>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -153,12 +171,22 @@
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
       <CallingConvention>Cdecl</CallingConvention>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalOptions>/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib %(AdditionalOptions)</AdditionalOptions>
+      <ModuleDefinitionFile>YtCrypto.def</ModuleDefinitionFile>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
+    <Midl>
+      <GenerateServerFiles>
+      </GenerateServerFiles>
+      <GenerateClientFiles>
+      </GenerateClientFiles>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
@@ -171,13 +199,23 @@
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
       <CompileAs>CompileAsCpp</CompileAs>
       <CallingConvention>Cdecl</CallingConvention>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalOptions>/nodefaultlib:vccorlibd /nodefaultlib:msvcrtd vccorlibd.lib msvcrtd.lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>YtCrypto.def</ModuleDefinitionFile>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
+    <Midl>
+      <GenerateServerFiles>
+      </GenerateServerFiles>
+      <GenerateClientFiles>
+      </GenerateClientFiles>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
@@ -190,12 +228,22 @@
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
       <CompileAs>CompileAsCpp</CompileAs>
       <CallingConvention>Cdecl</CallingConvention>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalOptions>/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib %(AdditionalOptions)</AdditionalOptions>
+      <ModuleDefinitionFile>YtCrypto.def</ModuleDefinitionFile>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
+    <Midl>
+      <GenerateServerFiles>
+      </GenerateServerFiles>
+      <GenerateClientFiles>
+      </GenerateClientFiles>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -207,13 +255,23 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
       <CallingConvention>Cdecl</CallingConvention>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalOptions>/nodefaultlib:vccorlibd /nodefaultlib:msvcrtd vccorlibd.lib msvcrtd.lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>YtCrypto.def</ModuleDefinitionFile>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
+    <Midl>
+      <GenerateServerFiles>
+      </GenerateServerFiles>
+      <GenerateClientFiles>
+      </GenerateClientFiles>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -225,21 +283,33 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
       <CallingConvention>Cdecl</CallingConvention>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalOptions>/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib %(AdditionalOptions)</AdditionalOptions>
+      <ModuleDefinitionFile>YtCrypto.def</ModuleDefinitionFile>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
+    <Midl>
+      <GenerateServerFiles>
+      </GenerateServerFiles>
+      <GenerateClientFiles>
+      </GenerateClientFiles>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="CipherInfo.h" />
     <ClInclude Include="Common.h" />
-    <ClInclude Include="mbedtlsConfig.h" />
     <ClInclude Include="CryptorFactory.h" />
     <ClInclude Include="CryptorProvider.h" />
-    <ClInclude Include="ICryptor.h" />
+    <ClInclude Include="MbedCryptor.h" />
+    <ClInclude Include="mbedtlsConfig.h" />
+    <ClInclude Include="SodiumCryptor.h" />
+    <ClInclude Include="Util.h" />
     <ClInclude Include="libsodium\builds\msvc\resource.h" />
     <ClInclude Include="libsodium\builds\msvc\version.h" />
     <ClInclude Include="libsodium\src\libsodium\crypto_core\ed25519\ref10\fe_25_5\base.h" />
@@ -449,13 +519,15 @@
     <ClInclude Include="mbedtls\include\mbedtls\x509_csr.h" />
     <ClInclude Include="mbedtls\include\mbedtls\xtea.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="MbedCryptor.h" />
-    <ClInclude Include="SodiumCryptor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CipherInfo.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CryptorFactory.cpp" />
+    <ClCompile Include="MbedCryptor.cpp" />
+    <ClCompile Include="module.g.cpp" />
+    <ClCompile Include="SodiumCryptor.cpp" />
+    <ClCompile Include="Util.cpp" />
     <ClCompile Include="libsodium\src\libsodium\crypto_aead\aes256gcm\aesni\aead_aes256gcm_aesni.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
@@ -2239,29 +2311,31 @@
       <CompileAs>CompileAsC</CompileAs>
       <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-      <CallingConvention Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Cdecl</CallingConvention>
-    </ClCompile>
-    <ClCompile Include="MbedCryptor.cpp">
-      <CallingConvention Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Cdecl</CallingConvention>
-    </ClCompile>
-    <ClCompile Include="SodiumCryptor.cpp">
-      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-      </LanguageStandard>
-      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-      </LanguageStandard>
-    </ClCompile>
+    <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="libsodium\builds\msvc\resource.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Midl Include="CryptorFactory.idl" />
+    <Midl Include="ICryptor.idl" />
+    <Midl Include="MbedCryptor.idl" />
+    <Midl Include="SodiumCryptor.idl" />
+    <Midl Include="Util.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="YtCrypto.def" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\..\..\packages\Microsoft.Windows.CppWinRT.2.0.200316.3\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\..\..\packages\Microsoft.Windows.CppWinRT.2.0.200316.3\build\native\Microsoft.Windows.CppWinRT.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\packages\Microsoft.Windows.CppWinRT.2.0.200316.3\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Windows.CppWinRT.2.0.200316.3\build\native\Microsoft.Windows.CppWinRT.props'))" />
+    <Error Condition="!Exists('..\..\..\packages\Microsoft.Windows.CppWinRT.2.0.200316.3\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Windows.CppWinRT.2.0.200316.3\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+  </Target>
 </Project>

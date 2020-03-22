@@ -1,5 +1,5 @@
 #pragma once
-#include <string>
+#include "pch.h"
 #include <unordered_map>
 #include "mbedtls\cipher.h"
 #include "crypto_stream_chacha20.h"
@@ -13,22 +13,22 @@ namespace YtCrypto {
 	class CipherInfo
 	{
 	public:
-		static std::unordered_map<std::wstring, CipherInfo> Ciphers;
-		CipherInfo(CryptorProvider provider, mbedtls_cipher_type_t cipherType, size_t keyLen, size_t ivLen)
+		static std::unordered_map<winrt::hstring, std::shared_ptr<CipherInfo>> Ciphers;
+		CipherInfo(CryptorProvider provider, mbedtls_cipher_type_t cipherType, int keyLen, int ivLen)
 			: Provider(provider), CipherType(cipherType), KeyLen(keyLen), IvLen(ivLen) {}
-		CipherInfo(CryptorProvider provider, mbedtls_cipher_type_t cipherType, size_t keyLen, size_t saltLen, size_t nonceLen, size_t tagLen)
+		CipherInfo(CryptorProvider provider, mbedtls_cipher_type_t cipherType, int keyLen, int saltLen, int nonceLen, int tagLen)
 			: Provider(provider), CipherType(cipherType), KeyLen(keyLen), IvLen(saltLen), NonceLen(nonceLen), TagLen(tagLen) {}
 
 		/* Common fields */
 		CryptorProvider Provider;
 		mbedtls_cipher_type_t CipherType;
-		size_t KeyLen;
-		size_t IvLen;
+		int KeyLen;
+		int IvLen;
 
 		/* Defined for AEAD ciphers */
-		// size_t SaltLen; // Reuse IvLen
-		size_t NonceLen;
-		size_t TagLen;
+		// int SaltLen; // Reuse IvLen
+		int NonceLen;
+		int TagLen;
 	};
 }
 

@@ -1,0 +1,13 @@
+namespace YtCrypto
+{
+	interface ICryptor
+	{
+		UInt64 IvLen { get; };
+		UInt32 Encrypt(UInt8[] encData, UInt32 encDataLen, ref UInt8[] outData);
+		UInt32 Encrypt(UInt64 encData, UInt32 encDataLen, UInt64 outData, UInt32 outDataLen);
+		UInt32 Decrypt(UInt8[] decData, UInt32 decDataLen, ref UInt8[] outData);
+		UInt32 Decrypt(UInt64 decData, UInt32 decDataLen, UInt64 outData, UInt32 outDataLen);
+		Int32 EncryptAuth(UInt64 encData, UInt32 encDataLen, UInt64 tagData, UInt32 tagDataLen, UInt64 outData, UInt32 outDataLen);
+		Int32 DecryptAuth(UInt64 decData, UInt32 decDataLen, UInt64 tagData, UInt32 tagDataLen, UInt64 outData, UInt32 outDataLen);
+	};
+}

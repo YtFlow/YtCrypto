@@ -1,0 +1,8 @@
+namespace YtCrypto
+{
+	runtimeclass Util
+    {
+		static void Sha224(UInt8[] key, ref UInt8[] outBuf);
+	}
+}
+
