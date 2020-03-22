@@ -525,7 +525,7 @@
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CryptorFactory.cpp" />
     <ClCompile Include="MbedCryptor.cpp" />
-    <ClCompile Include="module.g.cpp" />
+    <ClCompile Include="module.cpp" />
     <ClCompile Include="SodiumCryptor.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="libsodium\src\libsodium\crypto_aead\aes256gcm\aesni\aead_aes256gcm_aesni.c">

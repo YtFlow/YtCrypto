@@ -197,7 +197,7 @@
     <ClCompile Include="MbedCryptor.cpp" />
     <ClCompile Include="SodiumCryptor.cpp" />
     <ClCompile Include="CryptorFactory.cpp" />
-    <ClCompile Include="module.g.cpp" />
+    <ClCompile Include="module.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mbedtls\include\mbedtls\aes.h" />
