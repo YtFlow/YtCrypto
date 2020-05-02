@@ -4,6 +4,7 @@
 #include "Common.h"
 #include "MbedCryptor.h"
 #include "SodiumCryptor.h"
+#include "core.h"
 
 using namespace YtCrypto;
 

@@ -7,6 +7,10 @@ namespace winrt::YtCrypto::implementation
     CryptorFactory::CryptorFactory(std::shared_ptr<uint8_t[]> key, const CipherInfo& cipherInfo) noexcept
         : key(key), cipherInfo(cipherInfo)
     {
+        if (cipherInfo.Provider == CryptorProvider::SodiumAuth
+            || cipherInfo.Provider == CryptorProvider::SodiumStream) {
+            sodium_init();
+        }
     }
     YtCrypto::CryptorFactory CryptorFactory::CreateFactory(hstring const& method, array_view<uint8_t const> password)
     {
