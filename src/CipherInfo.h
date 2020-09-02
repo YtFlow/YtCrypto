@@ -8,27 +8,22 @@
 #include "crypto_aead_xchacha20poly1305.h"
 #include "CryptorProvider.h"
 #include "Algorithm.h"
+#include "winrt\YtCrypto.h"
+#include "Common.h"
+#include "CryptorFactory.h"
 
 namespace YtCrypto {
-	class CipherInfo
-	{
-	public:
-		static std::unordered_map<winrt::hstring, std::shared_ptr<CipherInfo>> Ciphers;
-		CipherInfo(CryptorProvider provider, mbedtls_cipher_type_t cipherType, int keyLen, int ivLen)
-			: Provider(provider), CipherType(cipherType), KeyLen(keyLen), IvLen(ivLen) {}
-		CipherInfo(CryptorProvider provider, mbedtls_cipher_type_t cipherType, int keyLen, int saltLen, int nonceLen, int tagLen)
-			: Provider(provider), CipherType(cipherType), KeyLen(keyLen), IvLen(saltLen), NonceLen(nonceLen), TagLen(tagLen) {}
-
-		/* Common fields */
-		CryptorProvider Provider;
-		mbedtls_cipher_type_t CipherType;
-		int KeyLen;
-		int IvLen;
-
-		/* Defined for AEAD ciphers */
-		// int SaltLen; // Reuse IvLen
-		int NonceLen;
-		int TagLen;
-	};
+    typedef winrt::YtCrypto::CryptorFactory factory_creator_t(winrt::array_view<uint8_t const> password);
+    class CipherInfo
+    {
+    private:
+    public:
+        template <CryptorProvider Provider, mbedtls_cipher_type_t CipherType, int KeyLen, int IvLen, int NonceLen = 0, int TagLen = 0>
+        static winrt::YtCrypto::CryptorFactory FactoryCreator(winrt::array_view<uint8_t const> password) {
+            auto key = winrt::YtCrypto::Common::LegacyDeriveKey<KeyLen>(password.data(), password.size());
+            return winrt::make<winrt::YtCrypto::implementation::CryptorFactory<Provider, CipherType, KeyLen, IvLen, NonceLen, TagLen>>(key);
+        }
+        static std::unordered_map<winrt::hstring, factory_creator_t*> Ciphers;
+    };
 }
 

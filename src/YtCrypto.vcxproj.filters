@@ -192,12 +192,9 @@
     <ClCompile Include="libsodium\src\libsodium\sodium\utils.c" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Util.cpp" />
-    <ClCompile Include="Common.cpp" />
     <ClCompile Include="CipherInfo.cpp" />
-    <ClCompile Include="MbedCryptor.cpp" />
-    <ClCompile Include="SodiumCryptor.cpp" />
-    <ClCompile Include="CryptorFactory.cpp" />
     <ClCompile Include="module.cpp" />
+    <ClCompile Include="CryptorFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mbedtls\include\mbedtls\aes.h" />
@@ -418,6 +415,7 @@
     <ClInclude Include="MbedCryptor.h" />
     <ClInclude Include="SodiumCryptor.h" />
     <ClInclude Include="CryptorFactory.h" />
+    <ClInclude Include="AeadMixin.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="libsodium\builds\msvc\resource.rc">
@@ -432,7 +430,7 @@
     <Midl Include="CryptorFactory.idl" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="YtCrypto.def" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
