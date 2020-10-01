@@ -52,7 +52,7 @@ namespace winrt::YtCrypto::implementation
                 }
                 dec_iv_inited = true;
                 mbedtls_cipher_set_iv(&decctx, decData, IvSize);
-                if (decctx.cipher_info->type == MBEDTLS_CIPHER_ARC4_128) {
+                if constexpr (CipherType == MBEDTLS_CIPHER_ARC4_128) {
                     std::array<uint8_t, MD5_LEN> realDecKey;
                     if (!Common::GenerateKeyMd5<KeyLen, IvSize>(*key, decData, realDecKey)) {
                         // This cannot happen unless there is something wrong with Mbed TLS

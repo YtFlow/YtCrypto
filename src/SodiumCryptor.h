@@ -36,7 +36,6 @@ namespace winrt::YtCrypto::implementation
     private:
         static const inline Algorithm algorithm = static_cast<Algorithm>(CipherType);
         static const inline size_t SODIUM_BLOCK_SIZE = 64;
-        static const inline size_t MAX_BLOCK_SIZE = 0x3FFF;
         bool enc_iv_inited = false;
         bool dec_iv_inited = false;
         std::array<uint8_t, IvSize> encIv;
